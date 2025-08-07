@@ -79,8 +79,123 @@ consegue dar dois passos largos consecutivos. Antes de ver as soluções que ire
 propor aqui, tente pensar na sua solução.
 
 ### 1ª Solução
+Criemos o vetor $dp$ que guardará a quantidade de maneiras de chegar no degrau
+$i$ de forma que o último passo foi pequeno e que o último passo foi grande. Ou
+seja, $dp[degrau] = [ultimo\_passo\_foi\_pequeno, ultimo\_passo\_foi\_grande]$.
+Nesse sentido, os casos bases são:
+
+- ``dp[0] = dp[1] = [1, 0]``, pois para chegar no solo ou no primeiro degrau, nesse
+caso, há apenas uma maneira;
+- ``dp[2] = [1, 1]``, pois, para chegar no 2º degrau, é possível dar 1 passo grande
+ou 2 passos pequenos.
 
 
+Por um raciocínio análogo ao da versão simplificada do problema de Pisano, a
+quantidade de maneiras de chegar no degrau $i$ de forma que o último passo foi
+pequeno é a quantidade de formas totais de chegar no degrau $i-1$, o degrau 
+anterior, já que, a partir dele, Pisano sempre pode subir 1 degrau. 
+
+Já a quantidade de maneiras de chegar no degrau $i$ de forma que o último passo
+foi grande é a quantidade de formas totais de chegar no degrau $i-2$ com o
+último passo pequeno ($i - tamanho\_passo = i - 2 $) . Isso porque, se o último 
+passo para chegar no degrau $i-2$ fosse um grande, não seria possível ir do 
+degrau $i-2$ para o $i$ com apenas um passo grande.
+
+Assim, para chegar no degrau $i$, temos que $dp[i] = [total\_do\_ultimo, passo\_
+pequeno\_penultimo]$. Pela nossa definição do vetor $dp$, podemos afirmar que
+$dp[i] = [sum(dp[i-1]), dp[i-2][0]]$.
+
+Em código (você pode conferir ele inteiro aqui: 
+[Fibonacci cansado.py](Pr%C3%A1tica/Fibonacci%20cansado%201.py), isso fica:
+```Python
+dp = [[-1, -1] for _ in range(maxn)]
+dp[0] = dp[1] = [1, 0]
+dp[2] = [1, 1]
+def fc(c):
+    # Verificações se já calculou ou não
+    # ou se c é um degrau válido
+    # ...
+
+    # calcula com 1 passo #
+    # todas as formas de chegar no degrau anterior
+    dp[c][0] = sum(fc(c-1))
+
+    # calcula com 2 passos #
+    # as formas de chegar no penúltimo degrau de forma 
+    # que o último passo tenha tamanho 1
+    dp[c][1] = fc(c-2)[0]
+
+    # retorna o que calculou
+    return dp[c]
+```
+
+### 2ª Solução
+Outra maneira de abordar esse problema é notar que:
+- Para um passo pequeno, pode se dar um passo grande ou um passo pequeno depois.
+Nesse caso, o passo pequeno tem tamanho $1$.
+- Para um passo grande, pode se dar apenas um passo pequeno depois. 
+Nesse caso, podemos agrupar esses $2$ passos em $1$ só estado que será 
+de um passo de tamanho $2+1 = 3$.
+
+Com isso, é possível afirmar que $f(i) = f(i-1) + f(i-3)$ por um raciocínio
+semelhante ao feito com a versão simplificada do problema de Pisano.
+
+Em código (você pode conferir ele completo aqui: 
+[Fibonacci cansado 2.py](Pr%C3%A1tica/Fibonacci%20cansado%202.py)), isso fica:
+```Python
+def fc(c):
+    # inicializa os valores base
+    v = [1, 1, 2]
+
+    # calcula cada valor
+    for i in range(3, c+1):
+        v.append(v[i-1] + v[i-3])
+    
+    # retorna o que calculou da posição pedida
+    return v[c]
+```
+
+## Fibonacci Saltitante
+Imagine o problema do Fibonacci cansado mas agora nosso colega Pisano sabe dar
+grandes saltos. Ou seja, ele pode subir 1 a $k$ degraus, sendo $k$ a quantidade
+máxima de degraus que ele pode subir. Dessa forma, calcule a quantidade de formas
+que o nosso parceiro pode alcançar o degrau $n$.
+
+Podemos generalizar a questão do "Fibonacci cansado". Dessa forma,
+de forma semelhante à 1ª solução, o nosso código fica (você pode ver o código
+completo aqui: 
+[Fibonacci saltitante 1.py](Pr%C3%A1tica/Fibonacci%20saltitante%201.py)):
+```Python
+dp = [[0] * maxk for _ in range(maxn)]
+dp[0][0] = dp[1][0] = 1 # só pode chegar no primeiro degrau dando 1 passo
+dp[2][0] = dp[2][1] = 1 # pode chegar no 2 degrau dando 2 passos de tamanho 1 ou 1 passo de tamanho 2
+
+def fs(d):
+    if d < 0: return [0]
+    # Verificações se já calculou ou não
+    # ...
+
+    # calcula cada forma
+    for i in range(1, k+1):
+        dp[d][i] = sum(fs(d - i))
+
+    return dp[d]
+```
+
+O código da 2ª solução fica (código completo: 
+[Fibonacci saltitante 2.py](Pr%C3%A1tica/Fibonacci%20saltitante%202.py)):
+```Python
+def fs(d):
+    # v[0] = 1, o resto 0
+    v = [1] + [0] * d
+
+    # calcula cada forma
+    for i in range(1, d+1):
+        for j in range(1, min(i, k) + 1):
+            v[i] += v[i-j]
+
+    return v[d]
+```
 
 
 ## KnapSack

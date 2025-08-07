@@ -4,8 +4,8 @@ Binary Indexed Tree (BIT)
 Uma Segment tree (árvore de segmento) com a indexação feita
 a partir do pressuposto que todo número pode ser escrito como
 uma soma de potências de 2. Nesse sentido, ao invés de ser
-organizado na forma "2n+1", é organizado na forma
-"n - (menor potência de 2 na soma de n por potências de 2)".
+organizado na forma "2n+1", como na Segment Tree, é organizado
+na forma "n - (menor potência de 2 na soma de n por potências de 2)".
 Por exemplo, se fossemos dar query(13), as posições do vetor
 que iriam ser olhadas são:
 Dado que: 13 = 2^3 + 2^2 + 2^0 = 8 + 4 + 1

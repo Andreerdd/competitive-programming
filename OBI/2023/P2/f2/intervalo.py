@@ -1,31 +1,31 @@
-# Pede a quantidade
-qntd = int(input())
+N = int(input())
 
-# Cria um vetor dos números
-nums = []
-tamIntervalo = 0 # tamanho do intervalo atual
-inicio = 1       # início do intervalo atual
-maior = 0        # tamanho do maior intervalo
+curr = {}
+l, r = 0, 0
+maior = 0
 
-# Pede os números
-for i in range(1, qntd+1):
-    current = int(input())
-    
-    # Se o número escrito já está dentro do intervalo,
-    # troca o início pra 1 posição depois da posição do número (já) escrito
-    if current in nums[inicio:i]:
-        inicio += nums[inicio:i].index(current) + 1
-        
-    # Tamanho do intervalo agora
-    tamIntervalo = i - inicio
-    
-    # se o tamanho do intervalo agora for maior
-    # que o maior intervalo, substitui
-    if tamIntervalo > maior:
-        maior = tamIntervalo
-        
-    # Adiciona na última posição o número digitado agora
-    nums.append(current)
-        
-# Printa o resultado final
+for i in range(N):
+    e = int(input())
+
+    # se não tiver no intervalo, só adiciona
+    if not e in curr:
+        curr[e] = i
+        maior = max(maior, r-l+1)
+        r += 1
+    else:
+        pos = curr[e] # a posição do número que já tá no intervalo
+
+        if pos < l: # se ela não está no intervalo, só adiciona
+            curr[e] = i
+            maior = max(maior, r-l+1)
+            r += 1
+            continue
+
+        l = pos+1
+        r = i+1
+        curr[e] = i
+
 print(maior)
+
+
+
